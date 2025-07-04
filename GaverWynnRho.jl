@@ -26,14 +26,25 @@ f(t) for the given 't'. M is the number of terms in the approximation.
 See the referrenced paper at the top of this file for more information.
 =#
 function gwr( LaplaceFunction, t, M  )
+  if(mod(M,2)!=0)
+    M += 1
+    @warn "M must be even. M increased to $M"
+  end
 
 
   #As per Abate and Valkó (2004), the precision should be set to (2.1)M
-  precision = Int(ceil(2.1*M))
+  #However, this was inadequate for M=60 and the transform pair [F(s) = 1/((s-1)^2+1), f(t) = exp(t)sin(t)]
+  #with t less than about t=1.5;
+  #using a precision of 2.5 fixed this issue at least to M=240.
+  #The error appears as NaNs after the Wynn rho algorithm, so an error has been added.
+  precisionMultiplier = 2.5
+  precision = Int(ceil(precisionMultiplier*M))
   t = ArbReal(t, digits = precision)
 
   #Calculate array of Gaver functionals
-  f_k_vector = [GaverFunctional(LaplaceFunction, t, k, precision) for k in 0:M ]
+  #f_k_vector = [GaverFunctional(LaplaceFunction, t, k, precision) for k in 0:M ] #BUG DEPRECATED
+  f_k_vector = GaverFunctionalsIter(LaplaceFunction, t, precision, M)
+
 
 
   #Apply Wynn rho algorithm to approximate inversion.
@@ -43,33 +54,39 @@ function gwr( LaplaceFunction, t, M  )
 
 end#function
 
-
-
-
-#|||| DEPRECATED||||#
-#Reliance on 'binomial()' causes problems
-#Calculates the kth Gaver functional for a Laplace-domain function 'LaplaceFunction
-#a time 't' and with precision.
-function GaverFunctional(LaplaceFunction, t::ArbReal, k::Int, precision::Int)
-
+#TODO Implement
+function GaverFunctionalsIter(LaplaceFunction, t::ArbReal, precision::Int, M::Int)
   #Alias the typing to avoid excessively long lines of code.
   A(n) = ArbReal(n, digits = precision)
 
 
-  #BUG binomial can only handle values up to a certain size.
-  #Calculate the functional f_k based on the formula (See equation (4) in referenced paper).
-  f_k = ArbReal(0, digits = precision)
-  for j = 0:k
-    f_k += (-1)^j*binomial(k,j)*LaplaceFunction( (k+j)*log(A(2))/t  )
+  G = fill(ArbReal(0, digits = precision), 2M+1, M+1)
+
+  #Calculate the Gaver functionals using the iterative formulation.
+  #(See equation (5) from the referenced paper)
+
+  #Initialise G_0^(n)
+  G[:,0+1] = [ (n*log(A(2))/t)*LaplaceFunction(n*log(A(2))/t) for n ∈ 0:2M ]
+  G[0+1,0+1] = 0 #Note that we add a trivial G_0^(0) to align with the Wynn Rho algorithm.
+
+  for k ∈ 1:M
+
+    for n ∈ k:2M-k
+
+      G[n+1, k+1] = (1+A(n)/A(k))*G[n+1,k-1+1] - (A(n)/A(k))*G[n+1+1, k-1+1]
+
+    end
+
   end
-  f_k *= (k*log(A(2))/t)*binomial(2k,k)
 
-  #A one-line version
-  #f_k = (k*log(A(2))/t)*binomial(2k,k)*sum( [(-1)^j*binomial(k,j)*LaplaceFunction( (k+j)*log(A(2))/t  ) for j in 0:k ] )
+  functionals = [G[i+1,i+1] for i ∈ 0:M]
 
-  return f_k
 
+
+  return functionals
 end
+
+
 
 
 #Applies the Wynn rho algorithm to approximate the solution to the inversion.
@@ -93,11 +110,43 @@ function WynnRho(FunctionalVector, precision)
   for k = 1:M
     for n = 0:(M-k)
       ρ[n+1,k+2] = ρ[n+1+1, k-2+2] + k/(ρ[n+1+1, k-1+2] - ρ[n+1, k-1+2])
+      if isnan(ρ[n+1,k+2]) && !( isnan(ρ[n+1+1, k-2+2]) || isnan(ρ[n+1+1, k-1+2]) || isnan(ρ[n+1, k-1+2]) )
+        @warn "NaN in Wynn rho algorithm. Consider increasing precisionMultiplier in gwr()."
+      end
     end
   end
+
 
   #Return element corresponding to the solution (See equation (7) in referenced paper.)
   return ρ[0+1,M+2]
 
+
+end
+
+
+
+
+#|||| DEPRECATED||||#
+#Reliance on 'binomial()' causes problems
+#Calculates the kth Gaver functional for a Laplace-domain function 'LaplaceFunction
+#a time 't' and with precision.
+function GaverFunctional(LaplaceFunction, t::ArbReal, k::Int, precision::Int)
+
+  #Alias the typing to avoid excessively long lines of code.
+  A(n) = ArbReal(n, digits = precision)
+
+
+  #Binomial can only handle values up to a certain size.
+  #Calculate the functional f_k based on the formula (See equation (4) in referenced paper).
+  f_k = ArbReal(0, digits = precision)
+  for j = 0:k
+    f_k += (-1)^j*binomial(k,j)*LaplaceFunction( (k+j)*log(A(2))/t  )
+  end
+  f_k *= (k*log(A(2))/t)*binomial(2k,k)
+
+  #A one-line version
+  #f_k = (k*log(A(2))/t)*binomial(2k,k)*sum( [(-1)^j*binomial(k,j)*LaplaceFunction( (k+j)*log(A(2))/t  ) for j in 0:k ] )
+
+  return f_k
 
 end

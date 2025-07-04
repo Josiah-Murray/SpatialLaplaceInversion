@@ -4,7 +4,7 @@ maxTime = 5
 numTVals = 100
 
 tVals = LinRange(maxTime/numTVals,maxTime,numTVals)
-M = 32
+M = 60
 
 
 F(s) = 1/(s+1)
