@@ -33,16 +33,14 @@ function gwr( LaplaceFunction, t, M  )
 
 
   #As per Abate and Valkó (2004), the precision should be set to (2.1)M
-  #However, this was inadequate for M=60 and the transform pair [F(s) = 1/((s-1)^2+1), f(t) = exp(t)sin(t)]
+  #However, this was inadequate (caused NaNs in WynnRho() ) for M=60 and the transform pair [F(s) = 1/((s-1)^2+1), f(t) = exp(t)sin(t)]
   #with t less than about t=1.5;
-  #using a precision of 2.5 fixed this issue at least to M=240.
-  #The error appears as NaNs after the Wynn rho algorithm, so an error has been added.
+  #using a precisionMultiplier of 2.5 fixed this issue at least to M=240.
   precisionMultiplier = 2.5
   precision = Int(ceil(precisionMultiplier*M))
   t = ArbReal(t, digits = precision)
 
   #Calculate array of Gaver functionals
-  #f_k_vector = [GaverFunctional(LaplaceFunction, t, k, precision) for k in 0:M ] #BUG DEPRECATED
   f_k_vector = GaverFunctionalsIter(LaplaceFunction, t, precision, M)
 
 
@@ -54,12 +52,11 @@ function gwr( LaplaceFunction, t, M  )
 
 end#function
 
-#TODO Implement
 function GaverFunctionalsIter(LaplaceFunction, t::ArbReal, precision::Int, M::Int)
   #Alias the typing to avoid excessively long lines of code.
   A(n) = ArbReal(n, digits = precision)
 
-
+  #Initialise matrix for calculating functionals
   G = fill(ArbReal(0, digits = precision), 2M+1, M+1)
 
   #Calculate the Gaver functionals using the iterative formulation.
@@ -69,19 +66,17 @@ function GaverFunctionalsIter(LaplaceFunction, t::ArbReal, precision::Int, M::In
   G[:,0+1] = [ (n*log(A(2))/t)*LaplaceFunction(n*log(A(2))/t) for n ∈ 0:2M ]
   G[0+1,0+1] = 0 #Note that we add a trivial G_0^(0) to align with the Wynn Rho algorithm.
 
+  #Perform iteration to calculate functionals
   for k ∈ 1:M
-
     for n ∈ k:2M-k
 
       G[n+1, k+1] = (1+A(n)/A(k))*G[n+1,k-1+1] - (A(n)/A(k))*G[n+1+1, k-1+1]
 
     end
-
   end
 
+  #the functional f_k(t) corresponds to G_k^(k)
   functionals = [G[i+1,i+1] for i ∈ 0:M]
-
-
 
   return functionals
 end
