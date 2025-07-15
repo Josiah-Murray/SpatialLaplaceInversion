@@ -11,6 +11,126 @@ using SpecialFunctions
 #Springer US.
 #https://doi.org/10.1007/978-0-387-68855-8
 
+
+#Takes in a function, 'inversionScheme', for inverting the Laplace transform and
+#returns a 2 by 35 array where the rows correspond to the tests (i.e. row
+#one corresponds to 'Cohen1' and 'Cohen1_exact),
+#the first column corresponds to the exact solutions, and the second to the
+#approximate solutions.
+function CohenSuite( inversionScheme, t)
+    exact = zeros(35)
+    approx = zeros(35)
+
+    exact[1] = Cohen1_exact(t)
+    approx[1] = inversionScheme(Cohen1, t)
+
+    exact[2] = Cohen2_exact(t)
+    approx[2] = inversionScheme(Cohen2, t)
+
+    exact[3] = Cohen3_exact(t)
+    approx[3] = inversionScheme(Cohen3, t)
+
+    exact[4] = Cohen4_exact(t)
+    approx[4] = inversionScheme(Cohen4, t)
+
+    exact[5] = Cohen5_exact(t)
+    approx[5] = inversionScheme(Cohen5, t)
+
+    exact[6] = Cohen6_exact(t)
+    approx[6] = inversionScheme(Cohen6, t)
+
+    exact[7] = Cohen7_exact(t)
+    approx[7] = inversionScheme(Cohen7, t)
+
+    exact[8] = Cohen8_exact(t)
+    approx[8] = inversionScheme(Cohen8, t)
+
+    exact[9] = Cohen9_exact(t)
+    approx[9] = inversionScheme(Cohen9, t)
+
+    exact[10] = Cohen10_exact(t)
+    approx[10] = inversionScheme(Cohen10, t)
+
+    exact[11] = Cohen11_exact(t)
+    approx[11] = inversionScheme(Cohen11, t)
+
+    exact[12] = Cohen12_exact(t)
+    approx[12] = inversionScheme(Cohen12, t)
+
+    exact[13] = Cohen13_exact(t)
+    approx[13] = inversionScheme(Cohen13, t)
+
+    exact[14] = Cohen14_exact(t)
+    approx[14] = inversionScheme(Cohen14, t)
+
+    exact[15] = Cohen15_exact(t)
+    approx[15] = inversionScheme(Cohen15, t)
+
+    exact[16] = Cohen16_exact(t)
+    approx[16] = inversionScheme(Cohen16, t)
+
+    exact[17] = Cohen17_exact(t)
+    approx[17] = inversionScheme(Cohen17, t)
+
+    exact[18] = Cohen18_exact(t)
+    approx[18] = inversionScheme(Cohen18, t)
+
+    exact[19] = Cohen19_exact(t)
+    approx[19] = inversionScheme(Cohen19, t)
+
+    exact[20] = Cohen20_exact(t)
+    approx[20] = inversionScheme(Cohen20, t)
+
+    exact[21] = Cohen21_exact(t)
+    approx[21] = inversionScheme(Cohen21, t)
+
+    exact[22] = Cohen22_exact(t)
+    approx[22] = inversionScheme(Cohen22, t)
+
+    exact[23] = Cohen23_exact(t)
+    approx[23] = inversionScheme(Cohen23, t)
+
+    exact[24] = Cohen24_exact(t)
+    approx[24] = inversionScheme(Cohen24, t)
+
+    exact[25] = Cohen25_exact(t)
+    approx[25] = inversionScheme(Cohen25, t)
+
+    exact[26] = Cohen26_exact(t)
+    approx[26] = inversionScheme(Cohen26, t)
+
+    exact[27] = Cohen27_exact(t)
+    approx[27] = inversionScheme(Cohen27, t)
+
+    exact[28] = Cohen28_exact(t)
+    approx[28] = inversionScheme(Cohen28, t)
+
+    exact[29] = Cohen29_exact(t)
+    approx[29] = inversionScheme(Cohen29, t)
+
+    exact[30] = Cohen30_exact(t)
+    approx[30] = inversionScheme(Cohen30, t)
+
+    exact[31] = Cohen31_exact(t)
+    approx[31] = inversionScheme(Cohen31, t)
+
+    exact[32] = Cohen32_exact(t)
+    approx[32] = inversionScheme(Cohen32, t)
+
+    exact[33] = Cohen33_exact(t)
+    approx[33] = inversionScheme(Cohen33, t)
+
+    exact[34] = Cohen34_exact(t)
+    approx[34] = inversionScheme(Cohen34, t)
+
+    exact[35] = Cohen35_exact(t)
+    approx[35] = inversionScheme(Cohen35, t)
+
+    return [exact approx]
+end
+#----#
+
+
 function Cohen1(s)
   return (s^2 + 1)^(-1/2)
 end
@@ -39,8 +159,8 @@ function Cohen4(s)
   return 1/( (s+0.2)^2 + 1)
 end
 
-function Cohen4_exact(s)
-  return exp(-0.2t)*sin(t)
+function Cohen4_exact(t)
+  return exp(-0.2*t)*sin(t)
 end
 
 function Cohen5(s)
@@ -81,7 +201,7 @@ function Cohen9(s)
 end
 
 function Cohen9_exact(t)
-  return (πt)^(-1/2)
+  return (π*t)^(-1/2)
 end
 
 function Cohen10(s)
@@ -107,7 +227,7 @@ function Cohen11_exact(t)
 end
 
 function Cohen12(s)
-  return (s(1+exp(-s)))^(-1)
+  return (s*(1+exp(-s)))^(-1)
 end
 
 function Cohen12_exact(t)
@@ -122,7 +242,7 @@ end
 
 
 function Cohen13(s)
-  return (s^2-1)(s^2+1)^(-2)
+  return (s^2-1)*(s^2+1)^(-2)
 end
 
 function Cohen13_exact(t)
@@ -134,7 +254,7 @@ function Cohen14(s)
 end
 
 function Cohen14_exact(t)
-  return (exp(-t/3) - exp(-t/2))*(4*π*t^3)^(-1/2)
+  return (exp(-t/4) - exp(-t/2))*(4*π*t^3)^(-1/2)
 end
 
 
@@ -291,7 +411,7 @@ function Cohen33_exact(t)
   if 0 <= t <= 1
     return t
   else
-    return 0
+    return 1
   end
 end
 
@@ -319,12 +439,12 @@ end
 # in Section 4.1
 #It actually appears as Example 3.6
 #=
-N=1000 is chosen somewhat arbitrarily. Numerical experiments indicate that
+I've chosen N=1000 chosen somewhat arbitrarily. Numerical experiments indicate that
 for t≈10, the terms are approximately of the order 10^-132 for n≈1000. which
 is far beyond the accuracies usually recorded for numerical Laplace inversion
 algorithms.
 =#
 function Cohen35_exact(t)
   N = 600
-  return t^(1/2)*sum(  [ (  (-1)^n*t^(n/6)/gamma((n+3)/6)  )   for n ∈ 0:N ]   )
+  return t^(-1/2)*sum(  [ (  (-1)^n*t^(n/6)/gamma((n+3)/6)  )   for n ∈ 0:N ]   )
 end

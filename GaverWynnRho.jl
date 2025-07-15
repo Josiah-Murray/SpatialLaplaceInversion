@@ -23,9 +23,9 @@ using ArbNumerics
 The primary function which runs the inversion.
 Inverts a function 'LaplaceFunction' of the form F(s), for some s, and returns
 f(t) for the given 't'. M is the number of terms in the approximation.
-See the referrenced paper at the top of this file for more information.
+See the referenced paper at the top of this file for more information.
 =#
-function gwr( LaplaceFunction, t, M  )
+function my_gwr( LaplaceFunction, t, M  )
   if(mod(M,2)!=0)
     M += 1
     @warn "M must be even. M increased to $M"
@@ -36,8 +36,10 @@ function gwr( LaplaceFunction, t, M  )
   #However, this was inadequate (caused NaNs in WynnRho() ) for M=60 and the transform pair [F(s) = 1/((s-1)^2+1), f(t) = exp(t)sin(t)]
   #with t less than about t=1.5;
   #using a precisionMultiplier of 2.5 fixed this issue at least to M=240.
-  precisionMultiplier = 2.5
+  precisionMultiplier = 3
   precision = Int(ceil(precisionMultiplier*M))
+
+  #Convert the input time to closest representation in the arbitrary precision data type.
   t = ArbReal(t, digits = precision)
 
   #Calculate array of Gaver functionals
