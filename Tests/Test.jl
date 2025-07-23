@@ -1,9 +1,15 @@
 using Plots
+Plots.plotlyjs()
 M=100
 
-tVal = 9.9
+setprecision(Int(ceil(log(2,10)*2.1*M))) #Note: this is not 'thread safe'
+tVal = BigFloat(9.9)
 
-results = CohenSuite( (LaplaceFunction, t) -> gwr(LaplaceFunction,t,M), tVal)
+gwr_algorithm = gwr_package
+#gwr_algorithm = my_gwr
+
+
+results = @time "Cohen test for $gwr_algorithm" CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
 
 errors = abs.(results[:,1] - results[:,2])
 
@@ -18,7 +24,7 @@ end
 ##
 tNum = 100
 tVals = LinRange(0.01, tVal, tNum)
-timeTest = [gwr(Cohen12, t, M) for t ∈ tVals]
+timeTest = [gwr_algorithm(Cohen12, t, M) for t ∈ tVals]
 timeTest_exact = [Cohen12_exact(t) for t ∈ tVals]
 
 q = plot(tVals, timeTest, linewidth = 4, box = :on, labels = "Approx.")
