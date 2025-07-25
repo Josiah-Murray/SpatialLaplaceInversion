@@ -127,7 +127,7 @@ end
 function gwr_package_GρThread(func, t, M)
 
   precisionFactor = 2.1 #See "Multi-precision laplace transform inversion"
-  precision = Int(ceil( 2.1*M  ))
+  precision = Int(ceil( precisionFactor*M  ))
   if precision < 8
     precision = 8 #ArbNumerics has a minimum decimal precision of 8
   end
@@ -207,7 +207,7 @@ end
 function gwr_package_GThread(func, t, M)
 
   precisionFactor = 2.1 #See "Multi-precision laplace transform inversion"
-  precision = Int(ceil( 2.1*M  ))
+  precision = Int(ceil( precisionFactor*M  ))
   if precision < 8
     precision = 8 #ArbNumerics has a minimum decimal precision of 8
   end
@@ -285,7 +285,7 @@ end
 function gwr_package_arbnumerics(func, t, M)
 
   precisionFactor = 2.1 #See "Multi-precision laplace transform inversion"
-  precision = Int(ceil( 2.1*M  ))
+  precision = Int(ceil( precisionFactor*M  ))
   if precision < 8
     precision = 8 #ArbNumerics has a minimum decimal precision of 8
   end
