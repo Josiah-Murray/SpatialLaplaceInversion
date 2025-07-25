@@ -1,15 +1,23 @@
 using Plots
+using BenchmarkTools
 Plots.plotlyjs()
 M=100
 
 setprecision(Int(ceil(log(2,10)*2.1*M))) #Note: this is not 'thread safe'
 tVal = BigFloat(9.9)
 
-gwr_algorithm = gwr_package
+
+
+#gwr_algorithm = gwr_package
 #gwr_algorithm = my_gwr
+#gwr_algorithm = gwr_package_arbnumerics
+gwr_algorithm = gwr_package_GThread
 
 
-results = @time "Cohen test for $gwr_algorithm" CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
+
+#results = @time "Cohen test for $gwr_algorithm" CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
+
+results = @btime CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
 
 errors = abs.(results[:,1] - results[:,2])
 
