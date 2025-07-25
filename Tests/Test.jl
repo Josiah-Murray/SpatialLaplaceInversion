@@ -10,8 +10,9 @@ tVal = BigFloat(9.9)
 
 #gwr_algorithm = gwr_package
 #gwr_algorithm = my_gwr
-#gwr_algorithm = gwr_package_arbnumerics
-gwr_algorithm = gwr_package_GThread
+gwr_algorithm = gwr_package_arbnumerics
+#gwr_algorithm = gwr_package_GThread
+#gwr_algorithm = gwr_package_GρThread
 
 
 
