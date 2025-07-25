@@ -13,8 +13,8 @@ tVal = BigFloat(9.9)
 #gwr_algorithm = gwr_package_arbnumerics
 #gwr_algorithm = gwr_package_GThread
 #gwr_algorithm = gwr_package_GρThread
-gwr_algorithm = gwr_package_iter
-
+#gwr_algorithm = gwr_package_iter
+gwr_algorithm = gwr_package_iter_threads
 
 #results = @time "Cohen test for $gwr_algorithm" CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
 
