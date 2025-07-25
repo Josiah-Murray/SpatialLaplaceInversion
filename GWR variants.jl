@@ -31,6 +31,99 @@ using ArbNumerics
 
 
 
+
+
+
+function gwr_package_iter(func, t, M)
+
+  precisionFactor = 2.1 #See "Multi-precision laplace transform inversion"
+  precision = Int(ceil( 2.1*M  ))
+  if precision < 8
+    precision = 8 #ArbNumerics has a minimum decimal precision of 8
+  end
+
+  t = ArbFloat(t, digits = precision)
+  Dt = typeof(t)
+
+
+
+
+  #||--Gaver functionals--||#
+  tau = log(convert(Dt, 2)) / t
+  broken = false #used in case of division by zero in wynn rho
+
+  M1 = M #Why?
+
+
+  G0 = zeros(Dt, M1 + 1)#stores Gaver functionals 0 through M which are all needed for Wynn rho
+
+
+  G_prev = zeros(Dt, 2*M1 + 1)#stores the previous step in the iteration for the Gaver functionals
+  G_next = zeros(Dt, 2*M1 + 1)#stores the next step in the iteration for the Gaver functional
+
+
+  #Initialise the iteration
+  for n = 1:2M
+    samplePoint = ( n*log(convert(Dt,2)) )/(t)
+    G_prev[n+1] = samplePoint*func( samplePoint )
+  end
+
+  #Calculate Gaver functionals
+  for k in 1:M
+    for n in k:2*M-k
+      G_next[n+1] = (1+convert(Dt, n//k))*G_prev[n+1] - (convert(Dt, n//k))*G_prev[n+2]
+    end
+
+    G_prev = G_next #Prep for next iteration step
+
+  end
+
+  G0 = G_next[1:M1+1]
+
+
+
+
+
+    #||--Wynn rho--||#
+
+    #Wynn rho uses values at 2 previous steps.
+    Gm = zeros(Dt, M1 + 1)
+
+    #stores current iteration
+    Gp = zeros(Dt, M1 + 1)
+
+
+    best = G0[M1] #Stores approximation at previous step in case of division by zero error.
+    for k in 0:M1-2
+        for n in (M1 - 2 - k):-1:0 #Need to go backwards to avoid saving over stuff we need
+            expr = G0[n + 2] - G0[n + 1]#Denominator part of recursive step in Wynn rho
+            #Check if there will be division by zero. If yes, stop algorithm.
+            if expr == 0
+                broken = true
+                @warn "Division by zero pre-empted on Wynn rho step $k out of $(M1-2).\n    Laplace function: $func"
+                break
+            end
+            #Calculate next terms in Wynn rho
+            expr = Gm[n + 2] + (k + 1) / expr
+            Gp[n + 1] = expr
+
+            #This true?
+            if isodd(k) && n == M1 - 2 - k
+                best = expr
+            end
+        end
+        if broken break end
+        #Move to next rows of approximations
+        for n in 0:(M1-k)
+          Gm[n + 1] = G0[n + 1]
+          G0[n + 1] = Gp[n + 1]
+        end
+    end
+    best
+end
+
+
+
 function gwr_package_GρThread(func, t, M)
 
   precisionFactor = 2.1 #See "Multi-precision laplace transform inversion"
