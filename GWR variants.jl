@@ -162,7 +162,7 @@ function gwr_package_iter(func, t, M)
       G_next[n+1] = (1+convert(Dt, n//k))*G_prev[n+1] - (convert(Dt, n//k))*G_prev[n+2]
     end
 
-    G_prev = G_next #Prep for next iteration step
+    G_prev = copy(G_next) #Prep for next iteration step
 
   end
 
