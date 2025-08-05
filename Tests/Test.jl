@@ -1,7 +1,7 @@
 using Plots
 using BenchmarkTools
 Plots.plotlyjs()
-M = 20
+M = 30
 
 setprecision(Int(ceil(log(2,10)*2.1*M))) #Note: this is not 'thread safe'
 tVal = BigFloat(9.9)
@@ -26,10 +26,6 @@ errors = abs.(results[:,1] - results[:,2])
 p = scatter(errors)
 display(p)
 
-for i in 1:35
-  println(i,": ", errors[i])
-end
-
 
 #OLD
 
@@ -40,13 +36,20 @@ errors_old = abs.(results_old[:,1] - results_old[:,2])
 temp = abs.(errors_old)-abs.(errors)
 temp = (temp)./abs.(errors_old)
 temp_plot = scatter(temp)
-plot!(title ="signum(error-error_old) M = $M")
+plot!(title ="(|error_old|-|error|)/|error_old| M = $M")
 display(temp_plot)
 
 ##
 
+for i in 1:35
+  println(i,": ", errors[i], "  |  ", errors_old[i])
+end
 
 
+
+
+
+#=
 tNum = 100
 tVals = LinRange(0.01, tVal, tNum)
 timeTest = [gwr_algorithm(Cohen30, t, M) for t ∈ tVals]
@@ -55,3 +58,4 @@ timeTest_exact = [Cohen30_exact(t) for t ∈ tVals]
 q = plot(tVals, timeTest, linewidth = 4, box = :on, labels = "Approx.")
 q = plot!(tVals, timeTest_exact, linewidth = 3, linestyle = :dash, labels = "Exact")
 display(q)
+=#

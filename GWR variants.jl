@@ -535,7 +535,7 @@ function gwr_package_GFFix(func, t, M)
     tau = log(convert(Dt, 2)) / t
     broken = false #used in case of division by zero in wynn rho
     Fi = Array{Dt}(undef, 2 * M)
-@inbounds  for i in 1: 2 * M #The @inbounds improves performance by preventing an internal check.
+@inbounds  for i in 1: 2 * M #The @inbounds improves performance by preventing an internal check. Will over right other data if implemented wrong.
         Fi[i] = func(i * tau) #Necessary function values are pre-calculated as many are re-used
     end
     M1 = M
@@ -570,8 +570,8 @@ function gwr_package_GFFix(func, t, M)
 
 
     best = G0[M1] #Stores approximation at previous step in case of division by zero error.
-    for k in 0:M1-2
-        for n in (M1 - 2 - k):-1:0 #Need to go backwards to avoid saving over stuff we need
+    for k in 1:M1
+        for n in (M1 - k):-1:0
             expr = G0[n + 2] - G0[n + 1]#Denominator part of recursive step in Wynn rho
             #Check if there will be division by zero. If yes, stop algorithm.
             if expr == 0
@@ -580,11 +580,11 @@ function gwr_package_GFFix(func, t, M)
                 break
             end
             #Calculate next terms in Wynn rho
-            expr = Gm[n + 2] + (k + 1) / expr
+            expr = Gm[n + 2] + (k) / expr
             Gp[n + 1] = expr
 
             #This true?
-            if isodd(k) && n == M1 - 2 - k
+            if iseven(k) && n == M1 - k
                 best = expr
             end
         end
@@ -593,6 +593,10 @@ function gwr_package_GFFix(func, t, M)
         for n in 0:(M1-k)
             Gm[n + 1] = G0[n + 1]
             G0[n + 1] = Gp[n + 1]
+
+            #Gm = copy(G0)
+            #G0 = copy(Gp)
+
         end
     end
     best
