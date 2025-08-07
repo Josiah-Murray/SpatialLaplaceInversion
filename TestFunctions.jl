@@ -18,8 +18,8 @@ using SpecialFunctions
 #the first column corresponds to the exact solutions, and the second to the
 #approximate solutions.
 function CohenSuite( inversionScheme, t)
-    exact = zeros(35)
-    approx = zeros(35)
+    exact = Vector{Float64}(undef, 35)
+    approx = Vector{Float64}(undef, 35)
 
     exact[1] = Cohen1_exact(t)
     approx[1] = inversionScheme(Cohen1, t)
@@ -128,6 +128,197 @@ function CohenSuite( inversionScheme, t)
 
     return [exact approx]
 end
+
+
+#Same as 'CohenSuite' except it excludes solution functions which aren't continuously differentiable
+#and solution functions which have undefined limits as t approaches 0. Namely, 2,9, 10, 11, 12, 14, 15, 26, 33, and 34
+function CohenSuiteContDiff( inversionScheme, t)
+  exact = Vector{Float64}(undef, 25)
+    approx = Vector{Float64}(undef, 25)
+    function_array = Vector{Function}(undef, 25)
+    #TODO add way to see which functions are used.
+
+    i=1
+    exact[i] = Cohen1_exact(t)
+    approx[i] = inversionScheme(Cohen1, t)
+    function_array[i] = Cohen1
+
+    #=
+    exact[2] = Cohen2_exact(t)
+    approx[2] = inversionScheme(Cohen2, t)
+    =#
+    i+=1
+    exact[i] = Cohen3_exact(t)
+    approx[i] = inversionScheme(Cohen3, t)
+    function_array[i] = Cohen3
+
+    i+=1
+    exact[i] = Cohen4_exact(t)
+    approx[i] = inversionScheme(Cohen4, t)
+    function_array[i] = Cohen4
+
+
+    i+=1
+    exact[i] = Cohen5_exact(t)
+    approx[i] = inversionScheme(Cohen5, t)
+    function_array[i] = Cohen5
+
+    i+=1
+    exact[i] = Cohen6_exact(t)
+    approx[i] = inversionScheme(Cohen6, t)
+    function_array[i] = Cohen6
+
+    i+=1
+    exact[i] = Cohen7_exact(t)
+    approx[i] = inversionScheme(Cohen7, t)
+    function_array[i] = Cohen7
+
+    i+=1
+    exact[i] = Cohen8_exact(t)
+    approx[i] = inversionScheme(Cohen8, t)
+    function_array[i] = Cohen8
+
+    #=
+    exact[9] = Cohen9_exact(t)
+    approx[9] = inversionScheme(Cohen9, t)
+    =#
+
+
+    #=
+    exact[10] = Cohen10_exact(t)
+    approx[10] = inversionScheme(Cohen10, t)
+    =#
+
+    #=
+    exact[11] = Cohen11_exact(t)
+    approx[11] = inversionScheme(Cohen11, t)
+    =#
+
+    #=
+    exact[12] = Cohen12_exact(t)
+    approx[12] = inversionScheme(Cohen12, t)
+    =#
+
+    i+=1
+    exact[i] = Cohen13_exact(t)
+    approx[i] = inversionScheme(Cohen13, t)
+    function_array[i] = Cohen13
+
+    #=
+    exact[14] = Cohen14_exact(t)
+    approx[14] = inversionScheme(Cohen14, t)
+    =#
+
+    #=
+    exact[15] = Cohen15_exact(t)
+    approx[15] = inversionScheme(Cohen15, t)
+    =#
+
+    i+=1
+    exact[i] = Cohen16_exact(t)
+    approx[i] = inversionScheme(Cohen16, t)
+    function_array[i] = Cohen16
+
+    i+=1
+    exact[i] = Cohen17_exact(t)
+    approx[i] = inversionScheme(Cohen17, t)
+    function_array[i] = Cohen17
+
+    i+=1
+    exact[i] = Cohen18_exact(t)
+    approx[i] = inversionScheme(Cohen18, t)
+    function_array[i] = Cohen18
+
+    i+=1
+    exact[i] = Cohen19_exact(t)
+    approx[i] = inversionScheme(Cohen19, t)
+    function_array[i] = Cohen19
+
+    i+=1
+    exact[i] = Cohen20_exact(t)
+    approx[i] = inversionScheme(Cohen20, t)
+    function_array[i] = Cohen20
+
+    i+=1
+    exact[i] = Cohen21_exact(t)
+    approx[i] = inversionScheme(Cohen21, t)
+    function_array[i] = Cohen21
+
+    i+=1
+    exact[i] = Cohen22_exact(t)
+    approx[i] = inversionScheme(Cohen22, t)
+    function_array[i] = Cohen22
+
+    i+=1
+    exact[i] = Cohen23_exact(t)
+    approx[i] = inversionScheme(Cohen23, t)
+    function_array[i] = Cohen23
+
+    i+=1
+    exact[i] = Cohen24_exact(t)
+    approx[i] = inversionScheme(Cohen24, t)
+    function_array[i] = Cohen24
+
+    i+=1
+    exact[i] = Cohen25_exact(t)
+    approx[i] = inversionScheme(Cohen25, t)
+    function_array[i] = Cohen25
+
+    #=
+    exact[26] = Cohen26_exact(t)
+    approx[26] = inversionScheme(Cohen26, t)
+    =#
+
+    i+=1
+    exact[i] = Cohen27_exact(t)
+    approx[i] = inversionScheme(Cohen27, t)
+    function_array[i] = Cohen27
+
+    i+=1
+    exact[i] = Cohen28_exact(t)
+    approx[i] = inversionScheme(Cohen28, t)
+    function_array[i] = Cohen28
+
+    i+=1
+    exact[i] = Cohen29_exact(t)
+    approx[i] = inversionScheme(Cohen29, t)
+    function_array[i] = Cohen29
+
+    i+=1
+    exact[i] = Cohen30_exact(t)
+    approx[i] = inversionScheme(Cohen30, t)
+    function_array[i] = Cohen30
+
+    i+=1
+    exact[i] = Cohen31_exact(t)
+    approx[i] = inversionScheme(Cohen31, t)
+    function_array[i] = Cohen31
+
+    i+=1
+    exact[i] = Cohen32_exact(t)
+    approx[i] = inversionScheme(Cohen32, t)
+    function_array[i] = Cohen32
+
+    #=
+    exact[33] = Cohen33_exact(t)
+    approx[33] = inversionScheme(Cohen33, t)
+    =#
+
+    #=
+    exact[34] = Cohen34_exact(t)
+    approx[34] = inversionScheme(Cohen34, t)
+    =#
+
+    i+=1
+    exact[i] = Cohen35_exact(t)
+    approx[i] = inversionScheme(Cohen35, t)
+    function_array[i] = Cohen35
+
+    return [exact approx function_array]
+end
+
+
+
 #----#
 
 

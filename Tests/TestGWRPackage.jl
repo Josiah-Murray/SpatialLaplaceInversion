@@ -1,7 +1,7 @@
 using InverseLaplace
 using Plots
 
-M=100
+M = 20
 
 tVal = 9.9
 
