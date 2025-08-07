@@ -34,9 +34,9 @@ results_old = @btime CohenSuite( (LaplaceFunction, t) -> gwr_package(LaplaceFunc
 errors_old = abs.(results_old[:,1] - results_old[:,2])
 
 temp = abs.(errors_old)-abs.(errors)
-temp = (temp)./abs.(errors_old)
+temp = (temp)./(abs.(errors_old)+abs.(errors))
 temp_plot = scatter(temp)
-plot!(title ="(|error_old|-|error|)/|error_old| M = $M")
+plot!(title ="(|error_old|-|error|)/(|error_old|+|error| M = $M")
 display(temp_plot)
 
 ##
@@ -45,7 +45,22 @@ for i in 1:35
   println(i,": ", errors[i], "  |  ", errors_old[i])
 end
 
+count_better = 0
+count_same = 0
+count_worse = 0
+for i in eachindex(errors)
+  if errors[i] > errors_old[i]
+    global count_worse += 1
+  elseif errors[i] < errors_old[i]
+    global count_better += 1
+  else
+    global count_same += 1
+  end
+end
 
+println("Number better: ", count_better)
+println("Number worse: ", count_worse)
+println("Number same: ", count_same)
 
 
 
