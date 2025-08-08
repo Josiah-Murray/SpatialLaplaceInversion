@@ -1,7 +1,7 @@
 using Plots
 using BenchmarkTools
 Plots.plotlyjs()
-M = 30
+M = 14
 
 setprecision(Int(ceil(log(2,10)*2.1*M))) #Note: this is not 'thread safe'
 tVal = BigFloat(9.9)
@@ -36,7 +36,12 @@ errors_old = abs.(results_old[:,1] - results_old[:,2])
 temp = abs.(errors_old)-abs.(errors)
 temp = (temp)./(abs.(errors_old)+abs.(errors))
 temp_plot = scatter(temp)
-plot!(title ="(|error_old|-|error|)/(|error_old|+|error| M = $M")
+plot!(title ="(|error_old|-|error|)/(|error_old|+|error|) for M = $M",
+  legend = false,
+  box = :origin,
+  ylims = [-1.1,1.1],
+  xticks = 1:35
+)
 display(temp_plot)
 
 ##
