@@ -1,3 +1,5 @@
+module TestFunctions
+
 #This file contains a set of test functions for evaluating the performance of
 #numerical Laplace inversion schemes
 
@@ -639,3 +641,6 @@ function Cohen35_exact(t)
   N = 600
   return t^(-1/2)*sum(  [ (  (-1)^n*t^(n/6)/gamma((n+3)/6)  )   for n ∈ 0:N ]   )
 end
+
+
+end #module
