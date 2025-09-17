@@ -1,6 +1,7 @@
 using Plots
 using BenchmarkTools
 Plots.plotlyjs()
+
 M = 14
 
 setprecision(Int(ceil(log(2,10)*2.1*M))) #Note: this is not 'thread safe'
@@ -19,7 +20,7 @@ gwr_algorithm = gwr_package_GFFix
 
 #results = @time "Cohen test for $gwr_algorithm" CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
 
-results = @btime CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
+results = CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
 
 errors = abs.(results[:,1] - results[:,2])
 
@@ -29,14 +30,14 @@ display(p)
 
 #OLD
 
-results_old = @btime CohenSuite( (LaplaceFunction, t) -> gwr_package(LaplaceFunction,t,M), tVal)
+results_old = CohenSuite( (LaplaceFunction, t) -> gwr_package(LaplaceFunction,t,M), tVal)
 
 errors_old = abs.(results_old[:,1] - results_old[:,2])
 
 temp = abs.(errors_old)-abs.(errors)
 temp = (temp)./(abs.(errors_old)+abs.(errors))
 temp_plot = scatter(temp)
-plot!(title ="(|error_old|-|error|)/(|error_old|+|error|) for M = $M",
+plot!(title ="Error comparison for M = $M",
   legend = false,
   box = :origin,
   ylims = [-1.1,1.1],
