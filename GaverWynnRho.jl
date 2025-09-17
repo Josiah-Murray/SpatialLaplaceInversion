@@ -1,4 +1,4 @@
-#This file contains the functions for my implementation of the Gaver-Wynn rho algrothim.
+#This file contains the functions for my implementation of the Gaver-Wynn rho algorithm.
 
 #The arbitrary precision is handled by the ArbNumerics package.
 #Notably, because the Gaver functionals involve the evaluation of the Laplace domain function,
@@ -35,7 +35,7 @@ function my_gwr( LaplaceFunction, t, M  )
   #As per Abate and Valkó (2004), the precision should be set to (2.1)M
   #However, this was inadequate (caused NaNs in WynnRho() ) for M=60 and the transform pair [F(s) = 1/((s-1)^2+1), f(t) = exp(t)sin(t)]
   #with t less than about t=1.5;
-  #using a precisionMultiplier of 2.5 fixed this issue at least to M=240.
+  #using a precisionMultiplier of 2.5 fixed this issue at least to M=240 for test problems.
   precisionMultiplier = 3
   precision = Int(ceil(precisionMultiplier*M))
 
@@ -92,21 +92,19 @@ end
 function WynnRho(FunctionalVector, precision)
   M = length(FunctionalVector)-1
 
-  #stores the elements in the Wynn rho sequence.
-  #In particular, ρ_k^(n) is stored at position ρ[n+1,k+2].
-  #Note that in the definition of the algorithm, k begins at -1 and
-  #n begins at 0.
-  #To make it easier to read, I have left the +1 and +2 unsimplified.
-  #That means ρ[0+1, 2+2], for instance, is equivalent to ρ_2^(0).
-  ρ = fill(ArbReal(0, digits = precision), M+1, M+2)
+  #Work with two 'columns' of the Wynn rho algorithm at any given time
+  ρ0 = fill(ArbReal(0, digits = precision), M+1, 1)
+  ρ1 = FunctionalVector
 
-  #First column only zeros, then second column is populated by the functionals.
-  ρ[:, 2] = FunctionalVector
 
-  #Do iteration based on formula (See equation (6) in referenced paper.)
   for k = 1:M
     for n = 0:(M-k)
-      ρ[n+1,k+2] = ρ[n+1+1, k-2+2] + k/(ρ[n+1+1, k-1+2] - ρ[n+1, k-1+2])
+
+      denom = ρ1[n+1]-ρ1[n]
+
+
+
+      ρ[n+1,k+2] = ρ[n+1+1, k-2+2] + k/
       if isnan(ρ[n+1,k+2]) && !( isnan(ρ[n+1+1, k-2+2]) || isnan(ρ[n+1+1, k-1+2]) || isnan(ρ[n+1, k-1+2]) )
         @warn "NaN in Wynn rho algorithm. Consider increasing precisionMultiplier in gwr()."
       end
@@ -145,5 +143,37 @@ function GaverFunctional(LaplaceFunction, t::ArbReal, k::Int, precision::Int)
   #f_k = (k*log(A(2))/t)*binomial(2k,k)*sum( [(-1)^j*binomial(k,j)*LaplaceFunction( (k+j)*log(A(2))/t  ) for j in 0:k ] )
 
   return f_k
+
+end
+
+
+function old_WynnRho(FunctionalVector, precision)
+  M = length(FunctionalVector)-1
+
+  #stores the elements in the Wynn rho sequence.
+  #In particular, ρ_k^(n) is stored at position ρ[n+1,k+2].
+  #Note that in the definition of the algorithm, k begins at -1 and
+  #n begins at 0.
+  #To make it easier to read, I have left the +1 and +2 unsimplified.
+  #That means ρ[0+1, 2+2], for instance, is equivalent to ρ_2^(0).
+  ρ = fill(ArbReal(0, digits = precision), M+1, M+2)
+
+  #First column only zeros, then second column is populated by the functionals.
+  ρ[:, 2] = FunctionalVector
+
+  #Do iteration based on formula (See equation (6) in referenced paper.)
+  for k = 1:M
+    for n = 0:(M-k)
+      ρ[n+1,k+2] = ρ[n+1+1, k-2+2] + k/(ρ[n+1+1, k-1+2] - ρ[n+1, k-1+2])
+      if isnan(ρ[n+1,k+2]) && !( isnan(ρ[n+1+1, k-2+2]) || isnan(ρ[n+1+1, k-1+2]) || isnan(ρ[n+1, k-1+2]) )
+        @warn "NaN in Wynn rho algorithm. Consider increasing precisionMultiplier in gwr()."
+      end
+    end
+  end
+
+
+  #Return element corresponding to the solution (See equation (7) in referenced paper.)
+  return ρ[0+1,M+2]
+
 
 end
