@@ -9,6 +9,7 @@ using SpecialFunctions
 function GWR(func, t, M)
 
   Dt = typeof(t)
+  Dt = Dt <: Complex ? Dt : Complex{Dt}
   if Dt <: Int
       @error "Type conversions fail for integers. Consider using a t with type BigFloat."
     end
@@ -84,6 +85,7 @@ end
 #func_array(s) should return an array of values (possible multiple dimensions).
 function GWR_array(input_func_array, t, M; shift_parameter = 0)
     Dt = typeof(t)
+    Dt = Dt <: Complex ? Dt : Complex{Dt}
     if Dt <: Int
       @error "Type conversions fail for integers. Consider using a t with type BigFloat."
     end
