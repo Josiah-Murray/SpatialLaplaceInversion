@@ -5,9 +5,13 @@ using SpecialFunctions
 
 #TODO: Add comment and citation to InverseLaplace.jl
 #TODO: Is it compatible with the ArbNumerics?
+#TODO: Implement shifting.
 function GWR(func, t, M)
 
   Dt = typeof(t)
+  if Dt <: Int
+      @error "Type conversions fail for integers. Consider using a t with type BigFloat."
+    end
 
   #||--Gaver functionals--||#
   tau = log(convert(Dt, 2)) / t #Sample points of Laplace domain function, `func` for Gaver functionals.
@@ -76,12 +80,17 @@ function GWR(func, t, M)
 end
 
 #TODO: Consider moving to a different file.
+#TODO: Fix naming of variables
 #func_array(s) should return an array of values (possible multiple dimensions).
-function GWR_array(func_array, t, M)
+function GWR_array(input_func_array, t, M; shift_parameter = 0)
     Dt = typeof(t)
+    if Dt <: Int
+      @error "Type conversions fail for integers. Consider using a t with type BigFloat."
+    end
     bM = convert(Dt, M) #Unused
     #println("Update")#BUG Debug line
 
+    func_array = s -> input_func_array(s+shift_parameter)
 
 
     #||--Gaver functionals--||#
@@ -168,8 +177,9 @@ function GWR_array(func_array, t, M)
     end
 
 
-    best
+    return best*exp(shift_parameter)
 end
+
 
 
 
