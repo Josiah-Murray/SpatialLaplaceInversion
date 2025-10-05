@@ -57,7 +57,7 @@ function GWR(func, t, M)
 
       #Check if valid approximation
       if iseven(k) && n == M - k
-        best = expr
+        best = denominator
       end
     end
 
