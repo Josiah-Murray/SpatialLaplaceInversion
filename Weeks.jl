@@ -72,7 +72,6 @@ end
 Evaluate the approximation through Weeks method stored in `Weeks` (created using [`GenerateWeeksApproximation`](@ref)) at the time `t`, using the Clenshaw algorithm.
 """
 function EvalWeeks(Weeks::WeeksApproximation, t)
-  #TODO Implement
   evalType = Weeks.evalType
   N = Weeks.N
   α_n = n -> - (1/(convert(evalType,n)+1))*t + (2*convert(evalType,n) + 1)/(convert(evalType, n)+1)
@@ -80,7 +79,7 @@ function EvalWeeks(Weeks::WeeksApproximation, t)
   p_0 = 1
   p_1 = 1-t
 
-  #Initial terms in the Clenshaw algorithm. Will be updated later to correspond to the two terms before the one we're calculating #TODO: Reword
+  #Set initial terms in the Clenshaw algorithm.
   bp2 = 0
   bp1 = 0
   b = 0
