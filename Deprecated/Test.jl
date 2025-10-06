@@ -1,16 +1,9 @@
 using Plots
-<<<<<<< HEAD
-M=40
-=======
 using BenchmarkTools
 Plots.plotlyjs()
->>>>>>> GWR-experiments
 
 M = 14
 
-<<<<<<< HEAD
-results = CohenSuiteContDiff( (LaplaceFunction, t) -> my_gwr(LaplaceFunction,t,M), tVal)
-=======
 setprecision(Int(ceil(log(2,10)*2.1*M))) #Note: this is not 'thread safe'
 tVal = BigFloat(9.9)
 
@@ -28,7 +21,6 @@ gwr_algorithm = gwr_package_GFFix
 #results = @time "Cohen test for $gwr_algorithm" CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
 
 results = CohenSuite( (LaplaceFunction, t) -> gwr_algorithm(LaplaceFunction,t,M), tVal)
->>>>>>> GWR-experiments
 
 errors = abs.(results[:,1] - results[:,2])
 
@@ -36,12 +28,6 @@ p = bar(eachindex(errors), errors)
 p = annotate!(eachindex(errors), string.(results[:,3]), :bottom)
 display(p)
 
-<<<<<<< HEAD
-for i in eachindex(errors)
-  println(results[i,3],": ", errors[i])
-end
-=======
->>>>>>> GWR-experiments
 
 #OLD
 
@@ -88,13 +74,8 @@ println("Number same: ", count_same)
 #=
 tNum = 100
 tVals = LinRange(0.01, tVal, tNum)
-<<<<<<< HEAD
-timeTest = [my_gwr(Cohen19, t, M) for t ∈ tVals]
-timeTest_exact = [Cohen19_exact(t) for t ∈ tVals]
-=======
 timeTest = [gwr_algorithm(Cohen30, t, M) for t ∈ tVals]
 timeTest_exact = [Cohen30_exact(t) for t ∈ tVals]
->>>>>>> GWR-experiments
 
 q = plot(tVals, timeTest, linewidth = 4, box = :on, labels = "Approx.")
 q = plot!(tVals, timeTest_exact, linewidth = 3, linestyle = :dash, labels = "Exact")
