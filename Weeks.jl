@@ -9,18 +9,18 @@ approximation for a particular value of t.
 
 The work flow for the method is as follows:
 1. Create an instance of the mutable struct [`WeeksApproximation`](@ref) using the
-  function [`GenerateWeeksApproximation`](@ref) which computes the coefficients of the
-  approximating Laguerre series.
+function [`GenerateWeeksApproximation`](@ref) which computes the coefficients of the
+approximating Laguerre series.
 
 2. Approximate the inversion at a time t by calling `EvalWeeks` and
-  passing in the created instance of the [`WeeksApproximation`](@ref) struct, and
-  a time value `t`.
+passing in the created instance of the [`WeeksApproximation`](@ref) struct, and
+a time value `t`.
 
 More details on the particular method used here can be found in:
 
 Lyness, J. N., & Giunta, G. (1986).
 A Modification of the Weeks Method for
-  Numerical Inversion of the Laplace Transform.
+Numerical Inversion of the Laplace Transform.
 Mathematics of Computation, 47(175), 313.
 https://doi.org/10.2307/2008097
 
@@ -36,14 +36,14 @@ module Weeks
 """
     WeeksApproximation(lapFunc, N, σ, b, coefficients, evalType)
 
-Stores the coefficients of a Weeks method approximation of order `N` to the Laplace domain function `lapFunc`, using parameters `σ` and `b`.
+Store the coefficients of a Weeks method approximation of order `N` to the Laplace domain function `lapFunc`, using parameters `σ` and `b`.
 Computations are performed by converting numbers to type `evalType` (in general this will be `Float64` or `BigFloat`).
 Should be initialised using the related function [`GenerateWeeksApproximation`](@ref).
 
 """
 mutable struct WeeksApproximation
   lapFunc #Laplace domain function to be approximated
-  N #Order of the leading term in the polynomial approximation. Should be even.
+  N #Order of the leading term in the polynomial approximation.
   σ #Control parameter
   b #Control parameter
   coefficients #Coefficients of the Laguerre series approximating lapFunc
@@ -55,7 +55,8 @@ end
 """
     GenerateWeeksApproximation(lapFunc, N, σ, b; evalType = Float64)
 
-Calculate the coefficients in the `N`th order Laguerre series for Weeks method, using parameters `σ` and `b`,  and return a [`WeeksApproximation`](@ref) struct. By default, performs calculations in `Float64`, but other data types (e.g. `BigFloat`) can be used by changing the `evalType` keyword argument.
+Calculate the coefficients in the `N`th order Laguerre series of Weeks method for a Laplace domain function `lapFunc(s)`, using parameters `σ` and `b`,  and return a [`WeeksApproximation`](@ref) struct. By default, performs calculations in `Float64`, but other data types (e.g. `BigFloat`) can be used by changing the `evalType` keyword argument.
+
 The inversion can be performed for a chosen time using [`EvalWeeks`](@ref).
 """
 function GenerateWeeksApproximation(lapFunc, N, σ, b; evalType = Float64)
@@ -65,7 +66,6 @@ function GenerateWeeksApproximation(lapFunc, N, σ, b; evalType = Float64)
   return WeeksApproximation(lapFunc, N, σ, b, coefficients, evalType)
 end
 
-#Uses the clenshaw algorithm to sum the laguerre polynomials
 """
     EvalWeeks(Weeks::WeeksApproximation, t)
 
@@ -86,21 +86,18 @@ function EvalWeeks(Weeks::WeeksApproximation, t)
 
   #Back propagation for Clenshaw algorithm
   for i in N:-1:1
-    b = Weeks.coefficients[i+1] + α_n(i)*bp1 + β_n(i+1)*bp2
+    b = Weeks.coefficients[i+1] .+ α_n(i)*bp1 .+ β_n(i+1)*bp2
     bp2 = bp1
     bp1 = b
 
   end
 
-  approximation = Weeks.coefficients[1] + (1-t)* bp1 + β_n(1)*bp2
+  approximation = Weeks.coefficients[1] .+ (1-t)* bp1 .+ β_n(1)*bp2
 
 
 
   return approximation
-
-
 end
-
 
 
 
@@ -120,6 +117,7 @@ function ComputeCoefficients(lapFunc, N, σ, b; evalType = Float64)
   return coefficients
 
 end
+
 
 """
     Calculate_ak(lapFunc, k, N, σ, b, evalType)
@@ -150,8 +148,6 @@ function Calculate_ak(lapFunc, k, N, σ, b, evalType; r = 0.9999, m = 2*N)
   return a_k
 
 end
-
-
 
 
 end

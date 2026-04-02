@@ -6,7 +6,7 @@ using SpecialFunctions
 #TODO: Add comment and citation to InverseLaplace.jl
 #TODO: Is it compatible with the ArbNumerics?
 #TODO: Implement shifting.
-function GWR(func, t, M)
+function GWR(func, t, M; shift_parameter = 0)
 
   Dt = typeof(t)
   Dt = Dt <: Complex ? Dt : Complex{Dt}
@@ -18,7 +18,7 @@ function GWR(func, t, M)
   tau = log(convert(Dt, 2)) / t #Sample points of Laplace domain function, `func` for Gaver functionals.
   Fi = Array{Dt}(undef, 2 * M) #Stores evaluations of `func`
   @inbounds  for i in 1: 2 * M #The @inbounds improves performance by preventing an internal check. Will over right other data if implemented wrong.
-    Fi[i] = func(i * tau) #Necessary function values are pre-calculated as many are re-used
+    Fi[i] = func(i * tau + shift_parameter) #Necessary function values are pre-calculated as many are re-used
   end
 
   ρ_0 = zeros(Dt, M + 1)#stores Gaver functionals 0 through M which are all needed for Wynn rho. Later over-written as part of the Wynn rho algorithm.
@@ -62,7 +62,7 @@ function GWR(func, t, M)
 
       #Check if valid approximation
       if iseven(k) && n == M - k
-        best = denominator
+        best_approximation = ρ_p[n + 1]
       end
     end
 
@@ -77,7 +77,7 @@ function GWR(func, t, M)
       ρ_0[n + 1] = ρ_p[n + 1]
     end
   end
-  best_approximation
+  return best_approximation*exp(shift_parameter*t)
 end
 
 #TODO: Consider moving to a different file.
@@ -179,7 +179,7 @@ function GWR_array(input_func_array, t, M; shift_parameter = 0)
     end
 
 
-    return best*exp(shift_parameter)
+    return best*exp(shift_parameter*t)
 end
 
 

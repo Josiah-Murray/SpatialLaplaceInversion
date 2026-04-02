@@ -6,8 +6,19 @@ using InverseLaplace: Weeks
 
 tVals = LinRange(0,1,100)
 
-ApproxStruct = NILaplace.WeeksApproximation(
-  NILaplace.TestFunctions.Cohen25,
+testFunctionArray = s-> [[NILaplace.TestFunctions.Cohen1(s),
+                          NILaplace.TestFunctions.Cohen6(s)];;
+                          [NILaplace.TestFunctions.Cohen15(s),
+                          NILaplace.TestFunctions.Cohen25(s)]]
+
+
+exactFunctionArray = t-> [[NILaplace.TestFunctions.Cohen1_exact(t),
+                          NILaplace.TestFunctions.Cohen6_exact(t)];;
+                          [NILaplace.TestFunctions.Cohen15_exact(t),
+                          NILaplace.TestFunctions.Cohen25_exact(t)]]
+
+ApproxStruct = NILaplace.Weeks.GenerateWeeksApproximation(
+  testFunctionArray,
   181,
   1/2,
   1
@@ -15,11 +26,5 @@ ApproxStruct = NILaplace.WeeksApproximation(
 
 #println("Exact: ", NILaplace.TestFunctions.Cohen25_exact(t))
 #println("Approx: ", NILaplace.EvalWeeks(ApproxStruct, t))
-println("Exact t=0: ", NILaplace.TestFunctions.Cohen25_exact(0))
-println("Approx t=0: ", NILaplace.EvalWeeks(ApproxStruct, 0))
-println("Correct approx t=0: ", sum(ApproxStruct.coefficients))
-
-exact = [NILaplace.TestFunctions.Cohen25_exact(t) for t in tVals]
-approx = [NILaplace.EvalWeeks(ApproxStruct, t) for t in tVals]
-
-plot(tVals, [exact approx], label = ["Exact" "Approx"])
+println("Exact t=0: ", exactFunctionArray(3.2))
+println("Approx t=0: ", NILaplace.EvalWeeks(ApproxStruct, 3.2))
