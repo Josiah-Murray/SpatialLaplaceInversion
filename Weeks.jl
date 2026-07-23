@@ -39,7 +39,6 @@ module Weeks
 Store the coefficients of a Weeks method approximation of order `N` to the Laplace domain function `lapFunc`, using parameters `σ` and `b`.
 Computations are performed by converting numbers to type `evalType` (in general this will be `Float64` or `BigFloat`).
 Should be initialised using the related function [`GenerateWeeksApproximation`](@ref).
-
 """
 mutable struct WeeksApproximation
   lapFunc #Laplace domain function to be approximated
@@ -58,6 +57,25 @@ end
 Calculate the coefficients in the `N`th order Laguerre series of Weeks method for a Laplace domain function `lapFunc(s)`, using parameters `σ` and `b`,  and return a [`WeeksApproximation`](@ref) struct. By default, performs calculations in `Float64`, but other data types (e.g. `BigFloat`) can be used by changing the `evalType` keyword argument.
 
 The inversion can be performed for a chosen time using [`EvalWeeks`](@ref).
+
+# Examples
+
+```jldoctest
+julia> f = s -> 1/s^2
+Julia> WeeksApprox = GenerateWeeksApproximation(f, 40, 0.5, 1.0)
+julia> EvalWeeks(WeeksApprox, 2.0) #Evaluate at t=2.0
+2.0000000000000018
+```
+
+
+```jldoctest
+julia> f = s -> [1/s^2, 1/s^3]
+Julia> WeeksApprox = GenerateWeeksApproximation(f, 40, 0.5, 1.0)
+julia> EvalWeeks(WeeksApprox, 2.0) #Evaluate at t=2.0
+2-element Vector{Float64}:
+ 2.0000000000000018
+ 2.000000000000003
+```
 """
 function GenerateWeeksApproximation(lapFunc, N, σ, b; evalType = Float64)
   σ = convert(evalType, σ)
@@ -66,10 +84,21 @@ function GenerateWeeksApproximation(lapFunc, N, σ, b; evalType = Float64)
   return WeeksApproximation(lapFunc, N, σ, b, coefficients, evalType)
 end
 
+
+
 """
     EvalWeeks(Weeks::WeeksApproximation, t)
 
 Evaluate the approximation through Weeks method stored in `Weeks` (created using [`GenerateWeeksApproximation`](@ref)) at the time `t`, using the Clenshaw algorithm.
+
+# Examples
+
+```jldoctest
+julia> f = s -> 1/s^2
+Julia> WeeksApprox = GenerateWeeksApproximation(f, 40, 0.5, 1.0)
+julia> EvalWeeks(WeeksApprox, 2.0) #Evaluate at t=2.0
+2.0000000000000018
+```
 """
 function EvalWeeks(Weeks::WeeksApproximation, t)
   evalType = Weeks.evalType

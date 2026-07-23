@@ -1,12 +1,68 @@
+"""
+An implementation of the Gaver-Wynn rho (GWR) method for the numerical inversion of the Laplace transform.
+The GWR method applies the Wynn rho sequence accelerator to the Gaver functionals, which are based on a finite difference approximation of the Post-Widder formula.
+The mehtod is highly effective, however, due to the possibility of catastrophic cancellation during computation, it requires calculations to be performed in at least `3M` digits of decimal precision.
+Additionally, the calculation involves a `1/t` factor, and so cannot evaluate for `t==0`, though it is still accurate for values of `t` close to zero.
+
+The method was originally described in the paper
+
+Abate, J., & Valkó, P. P. (2004).
+Multi‐precision Laplace transform inversion.
+International Journal for Numerical Methods in Engineering, 60(5), 979–993.
+https://doi.org/10.1002/nme.995
+
+and more details can be found in
+
+Valkó, P. P., & Abate, J. (2004).
+Comparison of sequence accelerators for the Gaver method of numerical Laplace transform inversion.
+Computers & Mathematics with Applications, 48(3–4), 629–636.
+https://doi.org/10.1016/j.camwa.2002.10.017
+"""
 module GaverWynnRho
 
 using SpecialFunctions
 
 
-#TODO: Add comment and citation to InverseLaplace.jl
-#TODO: Is it compatible with the ArbNumerics?
-#TODO: Implement shifting.
-function GWR(func, t, M; shift_parameter = 0)
+#TODO: Double check compatibility with ArbNumerics.jl
+
+"""
+    GWR(func, t, M::Int; shift_parameter = 0)
+
+Return the inverse Laplace transform of `func` evaluated at a time `t>0`, using `M` terms (note that `M` should be even).
+If the Laplace transform has a real pole, then the `shift_parameter` should have a value greater than the real pole in order to properly converge.
+
+In order to function properly, the method requires at least `3M` digits of decimal precision.
+The method will perform calculations in the same type as the input `t`. If using Julia's in-built `BigFloat` type, the precision can be set using `setprecision(3*M)` before calling the function.
+
+# Examples
+```jldoctest
+julia> M = 30
+
+julia> f = s -> 1/s^2
+
+julia> setprecision(3*M)
+
+julia> GWR(f, BigFloat(2), M)
+
+2.0000000008017433643555768716 + 0.0im
+
+```
+
+```jldoctest
+julia> M = 20
+
+julia> f = s -> 1/(s-1)
+
+julia> setprecision(3*M)
+
+julia> GWR(f, BigFloat(2), M, shift_parameter = 1.1) #Needs shifting parameter due to pole at s=1
+7.3890717799714764544 + 0.0im
+
+```
+
+
+"""
+function GWR(func, t, M::Int; shift_parameter = 0)
 
   Dt = typeof(t)
   Dt = Dt <: Complex ? Dt : Complex{Dt}
@@ -80,10 +136,31 @@ function GWR(func, t, M; shift_parameter = 0)
   return best_approximation*exp(shift_parameter*t)
 end
 
-#TODO: Consider moving to a different file.
-#TODO: Fix naming of variables
-#func_array(s) should return an array of values (possible multiple dimensions).
-function GWR_array(input_func_array, t, M; shift_parameter = 0)
+
+
+"""
+    GWR_array(input_func_array, t, M::Int; shift_parameter = 0)
+
+Return the inverse Laplace transform of `input_func_array` evaluated at a time `t>0`, using `M` terms (note that `M` should be even).
+If the Laplace transform has a real pole, then the `shift_parameter` should have a value greater than the real pole in order to properly converge.
+This function is a variation of `GWR` which is designed to handle functions which return arrays.
+
+
+In order to function properly, the method requires at least `3M` digits of decimal precision.
+The method will perform calculations in the same type as the input `t`. If using Julia's in-built `BigFloat` type, the precision can be set using `setprecision(3*M)` before calling the function.
+
+# Examples
+```jldoctest
+julia> M = 30
+julia> f = s -> [1/s^2, 1/s^3]
+julia> setprecision(3*M)
+julia> GWR_array(f, BigFloat(2), M)
+2-element Vector{Complex{BigFloat}}:
+ 2.0000000008017433643555768716 + 0.0im
+ 1.9999999986226895705876837472 + 0.0im
+```
+"""
+function GWR_array(input_func_array, t, M::Int; shift_parameter = 0)
     Dt = typeof(t)
     Dt = Dt <: Complex ? Dt : Complex{Dt}
     if Dt <: Int
