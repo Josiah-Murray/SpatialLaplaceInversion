@@ -1,5 +1,8 @@
 module SpatialLaplaceInversion
 
+using SpecialFunctions
+
+
 include("GaverWynnRho.jl")
 include("TestFunctions.jl")
 include("Weeks.jl")

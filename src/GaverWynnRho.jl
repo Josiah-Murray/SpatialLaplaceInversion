@@ -20,7 +20,7 @@ https://doi.org/10.1016/j.camwa.2002.10.017
 """
 module GaverWynnRho
 
-using SpecialFunctions
+using ..SpecialFunctions
 
 
 #TODO: Double check compatibility with ArbNumerics.jl

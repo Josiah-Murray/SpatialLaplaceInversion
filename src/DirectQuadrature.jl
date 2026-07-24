@@ -1,6 +1,6 @@
 module DirectQuadrature
 
-using SpecialFunctions
+using ..SpecialFunctions
 
 
 """

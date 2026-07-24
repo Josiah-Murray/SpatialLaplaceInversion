@@ -4,8 +4,7 @@ module TestFunctions
 #numerical Laplace inversion schemes
 
 
-using SpecialFunctions
-
+using ..SpecialFunctions
 #||||---Cohen----||||#
 
 #Cohen, A. M. (2007).
