@@ -1,4 +1,4 @@
-# NILaplace.jl
+# SpatialLaplaceInversion.jl
 NILaplace.jl provides a selection of algorithms for the inversion of the Laplace transform. It has a particular focus on applications with both temporal and spatial dimensions, but will perform equally well on time-only problems with no loss in efficiency.
 
 The following algorithms are provided:
