@@ -1,4 +1,4 @@
-module NILaplace
+module SpatialLaplaceInversion
 
 include("GaverWynnRho.jl")
 include("TestFunctions.jl")
