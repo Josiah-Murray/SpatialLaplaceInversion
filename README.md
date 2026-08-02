@@ -14,11 +14,11 @@ pkg> add https://github.com/Josiah-Murray/SpatialLaplaceInversion.git
 ```
 
 ## Picking up from InverseLaplace.jl
-I am indebted to the makers of the InverseLaplace.jl package for their work. The Gaver-Wynn rho algorithm provided here is a re-write based on their algorithm, and the original papers by Abate and Valkó [1,2] and my implementation of Weeks' method also drew upon on theirs.
+I am indebted to the makers of the InverseLaplace.jl package for their work. The Gaver-Wynn rho algorithm provided here is a re-write based on their algorithm alongside the original papers by Abate and Valkó [1,2], and my implementation of Weeks' method also drew upon on theirs.
 
 With my thanks conveyed, why am I making a new package when InverseLaplace.jl already exists? There are two main reasons:
 1. The algorithms in use were not immeadiately convenient for use in problems with a spatial component (hence the new package's name).
-2. Several of the features were only partially implemented and (at time of writing) the package was not being maintained.
+2. Several of the features were only partially implemented or had small technical errors and (at time of writing) InverseLaplace.jl was not being maintained.
 
 Whilst these were the motivating factors for development, I have added several features which set SpatialLaplaceInversion.jl apart from its predecessor:
 * Capacity of all algorithms to handle vector valued Laplace domain functions i.e. $f(t)\in\mathbb R ^n$, $\bar f(s)\in\mathbb C^n$. This makes them convenient for use in space-time problems.
