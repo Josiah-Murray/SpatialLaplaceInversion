@@ -3,6 +3,8 @@ module SpatialLaplaceInversion
 using SpecialFunctions
 
 
+export GWR, GWR_array, DQ, DQ_Array, WeeksApproximation, EvalWeeks
+
 include("GaverWynnRho.jl")
 include("TestFunctions.jl")
 include("Weeks.jl")
@@ -16,6 +18,8 @@ using .DirectQuadrature: DQ_Array
 
 using .Weeks: WeeksApproximation
 using .Weeks: EvalWeeks
+
+#TODO: Export test functions.
 
 
 
