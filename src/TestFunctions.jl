@@ -1,7 +1,10 @@
 module TestFunctions
 
+export CohenSuite, CohenSuiteContDiff
+
 #This file contains a set of test functions for evaluating the performance of
-#numerical Laplace inversion schemes
+#numerical Laplace inversion schemes.
+
 
 
 using ..SpecialFunctions
@@ -12,13 +15,12 @@ using ..SpecialFunctions
 #Springer US.
 #https://doi.org/10.1007/978-0-387-68855-8
 
+"""
+    CohenSuite( inversionScheme, t)
 
-#Takes in a function, 'inversionScheme', for inverting the Laplace transform and
-#returns a 2 by 35 array where the rows correspond to the tests (i.e. row
-#one corresponds to 'Cohen1' and 'Cohen1_exact),
-#the first column corresponds to the exact solutions, and the second to the
-#approximate solutions.
-function CohenSuite( inversionScheme, t)
+Takes in a function, 'inversionScheme', for inverting the Laplace transform and returns a 2 by 35 array where the rows correspond to the tests (i.e. row one corresponds to 'Cohen1' and 'Cohen1_exact), the first column corresponds to the exact solutions, and the second to the approximate solutions.
+"""
+function CohenSuite(inversionScheme, t)
     exact = Vector{Float64}(undef, 35)
     approx = Vector{Float64}(undef, 35)
 
@@ -130,9 +132,10 @@ function CohenSuite( inversionScheme, t)
     return [exact approx]
 end
 
-
-#Same as 'CohenSuite' except it excludes solution functions which aren't continuously differentiable
-#and solution functions which have undefined limits as t approaches 0. Namely, 2,9, 10, 11, 12, 14, 15, 26, 33, and 34
+"""
+    CohenSuiteContDiff( inversionScheme, t)
+Same as 'CohenSuite' except it excludes solution functions which aren't continuously differentiable and solution functions which have undefined limits as t approaches 0. Namely,  tests 2,9, 10, 11, 12, 14, 15, 26, 33, and 34.
+"""
 function CohenSuiteContDiff( inversionScheme, t)
   exact = Vector{Float64}(undef, 25)
     approx = Vector{Float64}(undef, 25)

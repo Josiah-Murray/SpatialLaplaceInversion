@@ -3,7 +3,7 @@ module SpatialLaplaceInversion
 using SpecialFunctions
 
 
-export GWR, GWR_array, DQ, DQ_Array, WeeksApproximation, EvalWeeks
+export GWR, GWR_array, DQ, DQ_Array, GenerateWeeksApproximation, EvalWeeks, CohenSuite, CohenSuiteContDiff
 
 include("GaverWynnRho.jl")
 include("TestFunctions.jl")
@@ -16,11 +16,11 @@ using .GaverWynnRho: GWR_array
 using .DirectQuadrature: DQ
 using .DirectQuadrature: DQ_Array
 
-using .Weeks: WeeksApproximation
+using .Weeks: GenerateWeeksApproximation
 using .Weeks: EvalWeeks
 
-#TODO: Export test functions.
-
+using .TestFunctions: CohenSuite
+using .TestFunctions: CohenSuiteContDiff
 
 
 
