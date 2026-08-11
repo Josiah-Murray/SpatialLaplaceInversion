@@ -1,5 +1,5 @@
 # SpatialLaplaceInversion.jl
-NILaplace.jl provides a selection of algorithms for the inversion of the Laplace transform. It has a particular focus on applications with both temporal and spatial dimensions, but will perform equally well on time-only problems with no loss in efficiency.
+SpatialLaplaceInversion.jl provides a selection of algorithms for the inversion of the Laplace transform. It has a particular focus on applications with both temporal and spatial dimensions, but will perform equally well on time-only problems with no loss in efficiency.
 
 The following algorithms are provided:
 * **Weeks' method**: Expands the time-domain solution in terms of Laguerre polynomials. Efficient when the solution is needed at many times, but may fail to converge for challenging problems.
